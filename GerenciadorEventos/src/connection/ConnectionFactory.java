@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 public class ConnectionFactory {
 	
 	private static String DRIVER = "com.mysql.jdbc.Driver";
-	private static String URL = "jdbc:mysql://localhost:3306/gerenciador_de_balada";
+	private static String URL = "jdbc:mysql://localhost:3306/gerenciador_de_pessoas";
 	private static String USER = "root";
 	private static String PASS = "";
 	

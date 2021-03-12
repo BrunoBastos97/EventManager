@@ -27,7 +27,7 @@ public class CadastroPessoa {
 	private JTextField textSobreNome;
 	private JTextField textPesquisa;
 	private JTable tablePessoas;
-
+	private int id;
 	/**
 	 * Launch the application.
 	 */
@@ -60,6 +60,8 @@ public class CadastroPessoa {
 		
 		for(PessoaModel p: pessoa.read()) {
 			modelo.addRow(new Object[] {
+				
+				p.getId(),	
 				p.getNome(),
 				p.getSobreNome()
 			});
@@ -75,6 +77,8 @@ public class CadastroPessoa {
 		
 		for(PessoaModel p: pessoa.readFroNome(nome)) {
 			modelo.addRow(new Object[] {
+				
+				p.getId(),		
 				p.getNome(),
 				p.getSobreNome()
 			});
@@ -127,10 +131,11 @@ public class CadastroPessoa {
 				PessoaModel pessoaModel = new PessoaModel();
 				PessoaDAO pessoDao = new PessoaDAO();
 				
+				pessoaModel.setId(id);
 				pessoaModel.setNome(textNome.getText());
 				pessoaModel.setSobreNome(textSobreNome.getText());
 								
-				pessoDao.create(pessoaModel);
+				pessoDao.update(pessoaModel);
 				
 				((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
 				readTtable();
@@ -141,6 +146,21 @@ public class CadastroPessoa {
 		frmPessoa.getContentPane().add(btnAtualizar);
 		
 		JButton btnDeletar = new JButton("Deletar");
+		btnDeletar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PessoaModel pessoaModel = new PessoaModel();
+				PessoaDAO pessoDao = new PessoaDAO();
+				
+				pessoaModel.setId(id);
+				pessoaModel.setNome(textNome.getText());
+				pessoaModel.setSobreNome(textSobreNome.getText());
+								
+				pessoDao.delete(pessoaModel);
+				
+				((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
+				readTtable();
+			}
+		});
 		btnDeletar.setBackground(new Color(255, 153, 153));
 		btnDeletar.setBounds(720, 362, 89, 23);
 		frmPessoa.getContentPane().add(btnDeletar);
@@ -186,9 +206,10 @@ public class CadastroPessoa {
 		tablePessoas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
-				textSobreNome.setText(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 0).toString());
+				
+				id = Integer.valueOf(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 0).toString());
 				textNome.setText(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 1).toString());
+				textSobreNome.setText(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 2).toString());
 
 			}
 		});
@@ -206,6 +227,12 @@ public class CadastroPessoa {
 		frmPessoa.getContentPane().add(btnHome);
 		
 		JButton btnLimpar = new JButton("Limpar");
+		btnLimpar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textNome.setText("");
+				textSobreNome.setText("");
+			}
+		});
 		btnLimpar.setBackground(new Color(204, 255, 255));
 		btnLimpar.setBounds(720, 84, 89, 23);
 		frmPessoa.getContentPane().add(btnLimpar);

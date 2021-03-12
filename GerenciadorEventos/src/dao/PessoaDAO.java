@@ -9,9 +9,12 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import connection.ConnectionFactory;
+import model.EtapaModel;
 import model.PessoaModel;
 
 public class PessoaDAO {
+	
+	EtapaDAO etapa = new EtapaDAO();
 	
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement statement = null;
@@ -26,8 +29,9 @@ public class PessoaDAO {
 			
 			statement.executeUpdate();
 			
+			etapa.etapa();
 			
-			JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
+			JOptionPane.showMessageDialog(null, pessoa.getNome() +" "+ pessoa.getSobreNome() + " cadastrado com sucesso!");
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao cadastrar!"+ ex);
 		}finally {
@@ -39,7 +43,7 @@ public class PessoaDAO {
 	public void update(PessoaModel pessoa) {
 		
 		try {
-			statement = connection.prepareStatement("UPDATE pessoas SET nome, sobreNome VALUES(?, ?) WHERE id = ?");
+			statement = connection.prepareStatement("UPDATE pessoas SET nome = ?, sobreNome = ? WHERE id = ?");
 			statement.setString(1, pessoa.getNome());
 			statement.setString(2, pessoa.getSobreNome());
 			statement.setInt(3, pessoa.getId());
@@ -47,7 +51,7 @@ public class PessoaDAO {
 			statement.executeUpdate();
 			
 			
-			JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+			JOptionPane.showMessageDialog(null, pessoa.getNome() +" "+ pessoa.getSobreNome() + " atualizado com sucesso!");
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao atualizar!"+ ex);
 		}finally {
@@ -59,14 +63,15 @@ public class PessoaDAO {
 	public void delete(PessoaModel pessoa) {
 		
 		try {
-			statement = connection.prepareStatement("DELET FROM pessoas WHERE id = ?");
+			statement = connection.prepareStatement("DELETE FROM pessoas WHERE id = ?");
 			statement.setInt(1, pessoa.getId());
 
 			
 			statement.executeUpdate();
+		
+			etapa.delete(pessoa);
 			
-			
-			JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+			JOptionPane.showMessageDialog(null, pessoa.getNome() +" "+ pessoa.getSobreNome() + " deletado com sucesso!");
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao deletar!"+ ex);
 		}finally {
@@ -85,6 +90,7 @@ public class PessoaDAO {
 			while (result.next()) {
 				PessoaModel pessoa = new PessoaModel();
 				
+				pessoa.setId(result.getInt("id"));
 				pessoa.setNome(result.getString("nome"));
 				pessoa.setSobreNome(result.getString("sobreNome"));
 				pessoas.add(pessoa);	
@@ -111,6 +117,7 @@ public class PessoaDAO {
 			while (result.next()) {
 				PessoaModel pessoa = new PessoaModel();
 				
+				pessoa.setId(result.getInt("id"));
 				pessoa.setNome(result.getString("nome"));
 				pessoa.setSobreNome(result.getString("sobreNome"));
 				pessoas.add(pessoa);	
@@ -124,5 +131,7 @@ public class PessoaDAO {
 		
 		return pessoas;
 	}
+	
+	
 	
 }

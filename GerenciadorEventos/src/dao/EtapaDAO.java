@@ -20,11 +20,11 @@ public class EtapaDAO {
 		
 		EtapaModel etapa = new EtapaModel();
 		try {
-			statement = connection.prepareStatement("SELECT MAX(id) as id FROM pessoas");
+			statement = connection.prepareStatement("SELECT MAX(id) as id FROM pessoas"); //pegou o id 6 / nome / sobrenome
 			result = statement.executeQuery();
 			
 			while (result.next()) {
-				etapa.setIdPessoa(result.getInt("id"));//result.getInt("id")
+				etapa.setIdPessoa(result.getInt("id"));// etapaModel IdPessoa = 6
 				etapa.setIdSalaDeEvento(1);
 				etapa.setIdEspacosCafe(1);
 				etapa.setTurno(1);

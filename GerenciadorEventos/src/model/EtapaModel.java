@@ -1,16 +1,16 @@
 package model;
 
 public class EtapaModel {
-	private int turno;
+	private int evento;
 	private int idPessoa;
 	private int idSalaDeEvento;
 	private int idEspacosCafe;
 	
-	public int getTurno() {
-		return turno;
+	public int getEvento() {
+		return evento;
 	}
-	public void setTurno(int turno) {
-		this.turno = turno;
+	public void setEvento(int evento) {
+		this.evento = evento;
 	}
 	public int getIdPessoa() {
 		return idPessoa;

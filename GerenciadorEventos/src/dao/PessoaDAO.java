@@ -29,7 +29,7 @@ public class PessoaDAO {
 			
 			statement.executeUpdate();
 			
-			//etapa.etapa();
+			etapa.idPessoa();
 			
 			JOptionPane.showMessageDialog(null, pessoa.getNome() +" "+ pessoa.getSobreNome() + " cadastrado com sucesso!");
 		} catch (Exception ex) {

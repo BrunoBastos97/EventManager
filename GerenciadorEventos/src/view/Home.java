@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 public class Home {
 
@@ -43,7 +44,7 @@ public class Home {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 928, 554);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -52,14 +53,26 @@ public class Home {
 		JMenu mnNewMenu = new JMenu("Menu");
 		menuBar.add(mnNewMenu);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Pessoa");
-		mntmNewMenuItem.addActionListener(new ActionListener() {
+		JMenuItem mnPessoa = new JMenuItem("Pessoa");
+		mnPessoa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CadastroPessoa pessoa = new CadastroPessoa();
 				pessoa.main(null);
 			}
 		});
-		mnNewMenu.add(mntmNewMenuItem);
+		mnNewMenu.add(mnPessoa);
+		
+		JMenu mnEtapas = new JMenu("Etapa");
+		menuBar.add(mnEtapas);
+		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Etapas");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Etapa etapa = new Etapa();
+				etapa.main(null);
+			}
+		});
+		mnEtapas.add(mntmNewMenuItem_1);
 		
 		JMenu mnNewMenu_1 = new JMenu("Help");
 		menuBar.add(mnNewMenu_1);

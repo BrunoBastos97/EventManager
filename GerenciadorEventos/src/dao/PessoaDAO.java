@@ -21,17 +21,22 @@ public class PessoaDAO {
 	ResultSet result = null;
 	
 	public void create(PessoaModel pessoa) {
-		
+		boolean lotado;
 		try {
 			statement = connection.prepareStatement("INSERT INTO pessoas(nome, sobreNome) VALUES(?, ?)");
 			statement.setString(1, pessoa.getNome());
 			statement.setString(2, pessoa.getSobreNome());
 			
-			statement.executeUpdate();
+			lotado = etapa.idPessoa();
 			
-			etapa.idPessoa();
+			if(lotado == false) {
+				statement.executeUpdate();
+				JOptionPane.showMessageDialog(null, pessoa.getNome() +" "+ pessoa.getSobreNome() + " cadastrado com sucesso!");
+			}else {
+				JOptionPane.showMessageDialog(null, "Não existe mas vagas!");
+				ConnectionFactory.closeConnection(connection, statement);
+			}
 			
-			JOptionPane.showMessageDialog(null, pessoa.getNome() +" "+ pessoa.getSobreNome() + " cadastrado com sucesso!");
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao cadastrar!"+ ex);
 		}finally {

@@ -206,7 +206,6 @@ public class CadastroPessoa {
 		btnPesquisa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PessoaModel pessoaModel = new PessoaModel();
-				PessoaDAO pessoDao = new PessoaDAO();
 				
 				pessoaModel.setNome(textPesquisa.getText());
 				

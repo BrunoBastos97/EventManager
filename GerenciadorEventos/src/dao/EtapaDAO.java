@@ -44,10 +44,12 @@ public class EtapaDAO {
 
 	public void createEtapas(EtapaModel etapa) {
 		
-
+		EventoDAO eventoDao = new EventoDAO();
+		int maxSalasEventos = eventoDao.maxSalasEventos();
+		
 		for(int NumeroDaEtapa = 1; NumeroDaEtapa <= 2; NumeroDaEtapa++) {
 			Random random = new Random();
-			int numero = (random.nextInt(2) + 1);
+			int numero = (random.nextInt(maxSalasEventos) + 1);
 			try { 
 				statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
 				statement.setInt(1, NumeroDaEtapa);

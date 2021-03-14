@@ -10,6 +10,7 @@ import dao.PessoaDAO;
 import model.PessoaModel;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
@@ -93,7 +94,7 @@ public class CadastroPessoa {
 		frmPessoa = new JFrame();
 		frmPessoa.setTitle("Pessoa");
 		frmPessoa.setBounds(100, 100, 861, 510);
-		frmPessoa.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmPessoa.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frmPessoa.getContentPane().setLayout(null);
 		
 		JButton btnCreat = new JButton("Adicionar");
@@ -103,14 +104,20 @@ public class CadastroPessoa {
 				PessoaModel pessoaModel = new PessoaModel();
 				PessoaDAO pessoDao = new PessoaDAO();
 				
-				pessoaModel.setNome(textNome.getText());
-				pessoaModel.setSobreNome(textSobreNome.getText());
-				
-				pessoDao.create(pessoaModel);
-				
-				((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
-				readTtable();
-				
+				if(textNome.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "É preciso preencher o campo nome!");
+				}
+				else if(textSobreNome.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "É preciso preencher o campo sobre nome!");
+				}else {
+					pessoaModel.setNome(textNome.getText());
+					pessoaModel.setSobreNome(textSobreNome.getText());
+					
+					pessoDao.create(pessoaModel);
+					
+					((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
+					readTtable();
+				}
 			}
 		});
 		btnCreat.setBounds(47, 362, 89, 23);
@@ -131,14 +138,23 @@ public class CadastroPessoa {
 				PessoaModel pessoaModel = new PessoaModel();
 				PessoaDAO pessoDao = new PessoaDAO();
 				
-				pessoaModel.setId(id);
-				pessoaModel.setNome(textNome.getText());
-				pessoaModel.setSobreNome(textSobreNome.getText());
-								
-				pessoDao.update(pessoaModel);
-				
-				((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
-				readTtable();
+				if(id == 0) {	
+					JOptionPane.showMessageDialog(null, "É preciso selecionar um registro!");	
+				}else if(textNome.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "É preciso preencher o campo nome!");
+				}
+				else if(textSobreNome.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "É preciso preencher o campo sobre nome!");
+				}else {
+					pessoaModel.setId(id);
+					pessoaModel.setNome(textNome.getText());
+					pessoaModel.setSobreNome(textSobreNome.getText());
+									
+					pessoDao.update(pessoaModel);
+					
+					((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
+					readTtable();
+				}
 			}
 		});
 		btnAtualizar.setBackground(new Color(255, 255, 153));
@@ -150,15 +166,18 @@ public class CadastroPessoa {
 			public void actionPerformed(ActionEvent e) {
 				PessoaModel pessoaModel = new PessoaModel();
 				PessoaDAO pessoDao = new PessoaDAO();
+							
+				if(id == 0) {
+					JOptionPane.showMessageDialog(null, "É preciso selecionar um registro!");
+				}else {
+					pessoaModel.setId(id);
+									
+					pessoDao.delete(pessoaModel);
+					
+					((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
+					readTtable();
+				}
 				
-				pessoaModel.setId(id);
-				pessoaModel.setNome(textNome.getText());
-				pessoaModel.setSobreNome(textSobreNome.getText());
-								
-				pessoDao.delete(pessoaModel);
-				
-				((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
-				readTtable();
 			}
 		});
 		btnDeletar.setBackground(new Color(255, 153, 153));
@@ -210,9 +229,9 @@ public class CadastroPessoa {
 				id = Integer.valueOf(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 0).toString());
 				textNome.setText(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 1).toString());
 				textSobreNome.setText(tablePessoas.getModel().getValueAt(tablePessoas.getSelectedRow(), 2).toString());
-
 			}
 		});
+		
 		tablePessoas.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
@@ -223,6 +242,11 @@ public class CadastroPessoa {
 		scrollPane.setViewportView(tablePessoas);
 		
 		JButton btnHome = new JButton("Home");
+		btnHome.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			frmPessoa.setVisible(false);
+		}
+		});
 		btnHome.setBounds(47, 7, 89, 23);
 		frmPessoa.getContentPane().add(btnHome);
 		

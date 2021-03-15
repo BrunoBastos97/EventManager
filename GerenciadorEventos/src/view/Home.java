@@ -10,10 +10,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import java.awt.Font;
+import javax.swing.JScrollPane;
 
 public class Home {
 
-	private JFrame frame;
+	private JFrame frameHome;
 
 	/**
 	 * Launch the application.
@@ -23,7 +26,7 @@ public class Home {
 			public void run() {
 				try {
 					Home window = new Home();
-					window.frame.setVisible(true);
+					window.frameHome.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,13 +45,13 @@ public class Home {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 928, 554);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frameHome = new JFrame();
+		frameHome.setBounds(100, 100, 928, 554);
+		frameHome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameHome.getContentPane().setLayout(null);
 		
 		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+		frameHome.setJMenuBar(menuBar);
 		
 		JMenu mnNewMenu = new JMenu("Menu");
 		menuBar.add(mnNewMenu);
@@ -74,7 +77,13 @@ public class Home {
 		});
 		mnEtapas.add(mntmNewMenuItem_1);
 		
-		JMenu mnNewMenu_1 = new JMenu("Help");
-		menuBar.add(mnNewMenu_1);
+		JMenuItem mnHelp = new JMenuItem("Help");
+		mnHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Help help = new Help();
+				help.main(null);
+			}
+		});
+		menuBar.add(mnHelp);
 	}
 }

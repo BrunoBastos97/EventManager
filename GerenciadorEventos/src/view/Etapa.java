@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -75,7 +76,11 @@ public class Etapa {
 		tableEtapa.setRowSorter(new TableRowSorter(modelo));
 		
 		EtapaDAO etapa = new EtapaDAO();
-		
+		if(textNome.getText().equals("")) {
+			JOptionPane.showMessageDialog(null, "Digite o nome!");
+		}else if(textSobreNome.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "Digite o sobre nome!");
+		}
 		for(EtapaModel e: etapa.readPesquisa(pesquisa)) {
 			modelo.addRow(new Object[] {
 					e.getNome(),

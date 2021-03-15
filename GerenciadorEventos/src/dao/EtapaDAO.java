@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import connection.ConnectionFactory;
 import model.EtapaModel;
 import model.PessoaModel;
+import model.VerificarLotacaoModel;
 
 public class EtapaDAO {
 	Connection connection = ConnectionFactory.getConnection();
@@ -20,19 +21,21 @@ public class EtapaDAO {
 	
 	int quantidadeDeSalas = 1;
 	int idSalaEvento = 1;
+	boolean lotado = false;
 	
-	public void idPessoa() {
+	public boolean idPessoa() {
+		boolean estaLotado = false;
 		
 		EtapaModel etapa = new EtapaModel();
 		try {
-			statement = connection.prepareStatement("SELECT MAX(id) as id FROM pessoas"); 
+			statement = connection.prepareStatement("SELECT COUNT(id) as id FROM pessoas"); 
 			result = statement.executeQuery();
-			
+
 			while (result.next()) {
-				etapa.setIdPessoa(result.getInt("id"));
+				etapa.setIdPessoa(result.getInt("id") + 1);
 			}
 			
-			createEtapas(etapa);
+			estaLotado = create(etapa);
 			
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao cadastrar etapa!"+ ex);
@@ -40,32 +43,64 @@ public class EtapaDAO {
 			ConnectionFactory.closeConnection(connection, statement, result);
 		}
 		
+		return estaLotado;
 	}
-
-	public void createEtapas(EtapaModel etapa) {
-		
+	
+	public boolean create(EtapaModel etapa) {
 		EventoDAO eventoDao = new EventoDAO();
 		int maxSalasEventos = eventoDao.maxSalasEventos();
+		int lotados = 0;
 		
 		for(int NumeroDaEtapa = 1; NumeroDaEtapa <= 2; NumeroDaEtapa++) {
-			Random random = new Random();
-			int numero = (random.nextInt(maxSalasEventos) + 1);
-			try { 
-				statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
-				statement.setInt(1, NumeroDaEtapa);
-				statement.setInt(2, numero);
-				statement.setInt(3, numero);
-				statement.setInt(4, etapa.getIdPessoa());
-				
-				statement.executeUpdate();
-				
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(null, "Erro ao cadastrar na etapa!"+ ex);
-			}finally {
-				ConnectionFactory.closeConnection(connection, statement);
+			for(int i = 1; maxSalasEventos >= i; i++) {
+		
+			VerificarLotacaoModel verificar = eventoDao.verificarLotacao(i);
+			
+			if(verificar.getLotacao() > verificar.getCountPessoa()) {
+				try { 
+					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
+					statement.setInt(1, NumeroDaEtapa);
+					statement.setInt(2, i);
+					statement.setInt(3, i);
+					statement.setInt(4, etapa.getIdPessoa());
+						
+					statement.executeUpdate();
+						
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao cadastrar na etapa!"+ ex);
+				}finally {
+					ConnectionFactory.closeConnection(connection, statement);
+				}
+				break;
+			}else if(verificar.getLotacao() == 0 && verificar.getCountPessoa() == 0){
+				try { 
+					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
+					statement.setInt(1, NumeroDaEtapa);
+					statement.setInt(2, i);
+					statement.setInt(3, i);
+					statement.setInt(4, etapa.getIdPessoa());
+						
+					statement.executeUpdate();
+						
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao cadastrar na etapa!"+ ex);
+				}finally {
+					ConnectionFactory.closeConnection(connection, statement);
+				}
+				break;
+			}else {
+				lotados++;
+			}
+			
 			}
 		}
-	
+		VerificarLotacaoModel verificar = eventoDao.verificarLotacaoGeral();
+		
+		if(lotados == verificar.getLotacaoGeral()) {
+			lotado = true;
+		}
+		
+		return lotado;
 	}
 	
 	public void readNumeroEventoECafe() {
@@ -87,20 +122,55 @@ public class EtapaDAO {
 		
 	}
 	
-	public List<PessoaModel>  read() {
-		List<PessoaModel> pessoas = new ArrayList<>();
+	public List<EtapaModel>  read() {
+		List<EtapaModel> etapas = new ArrayList<>();
 		
 		try {
-			statement = connection.prepareStatement("SELECT * FROM etapas");
+			statement = connection.prepareStatement("select p.nome as nomePessoa,  p.sobreNome, e.evento, se.nome as nomeEvento, ec.nome as nomeCafe from etapas e inner join pessoas p on p.id = e.id_pessoas \r\n"
+					+ "									   inner join salasEventos se on e.id_salasEventos = se.id \r\n"
+					+ "									   inner join espacosCafe ec on e.id_espacosCafe = ec.id order by p.id");
 			result = statement.executeQuery();
 			
 			while (result.next()) {
-				PessoaModel pessoa = new PessoaModel();
+				EtapaModel etapa = new EtapaModel();
 				
-				pessoa.setId(result.getInt("id"));
-				pessoa.setNome(result.getString("nome"));
-				pessoa.setSobreNome(result.getString("sobreNome"));
-				pessoas.add(pessoa);	
+				etapa.setNome(result.getString("nomePessoa"));
+				etapa.setSobreNome(result.getString("sobreNome"));
+				etapa.setEvento(result.getInt("evento"));
+				etapa.setSalaDeEvento(result.getString("nomeEvento"));
+				etapa.setEspacoDeCafe(result.getString("nomeCafe"));
+				etapas.add(etapa);	
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao listar etapas!"+ ex);
+		}finally {
+			ConnectionFactory.closeConnection(connection, statement, result);
+		}
+		
+		return etapas;
+	}
+	
+	public List<EtapaModel>  readPesquisa(EtapaModel pesquisa) {
+		List<EtapaModel> etapas = new ArrayList<>();
+		
+		try {
+			statement = connection.prepareStatement("select p.nome as nomePessoa,  p.sobreNome, e.evento, se.nome as nomeEvento, ec.nome as nomeCafe from etapas e inner join pessoas p on p.id = e.id_pessoas \r\n"
+					+ "									   inner join salasEventos se on e.id_salasEventos = se.id \r\n"
+					+ "									   inner join espacosCafe ec on e.id_espacosCafe = ec.id where p.nome like ? && p.sobreNome like ?" );
+			statement.setString(1, pesquisa.getNome()+"%");
+			statement.setString(2, pesquisa.getSobreNome()+"%");
+			result = statement.executeQuery();
+			
+			while (result.next()) {
+				EtapaModel etapa = new EtapaModel();
+			
+				etapa.setNome(result.getString("nomePessoa"));
+				etapa.setSobreNome(result.getString("sobreNome"));
+				etapa.setEvento(result.getInt("evento"));
+				etapa.setSalaDeEvento(result.getString("nomeEvento"));
+				etapa.setEspacoDeCafe(result.getString("nomeCafe"));
+				etapas.add(etapa);	
 			}
 			
 		} catch (Exception ex) {
@@ -109,7 +179,7 @@ public class EtapaDAO {
 			ConnectionFactory.closeConnection(connection, statement, result);
 		}
 		
-		return pessoas;
+		return etapas;
 	}
 	
 	public void delete(PessoaModel pessoa) {
@@ -127,5 +197,7 @@ public class EtapaDAO {
 		}
 	
 	}
+	
+
 
 }

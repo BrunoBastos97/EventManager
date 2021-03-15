@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Model da classe Cafe
+ * @author mariana*/
 public class CafeModel {
 	
 	private int id;

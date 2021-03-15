@@ -1,5 +1,9 @@
 package dao;
 
+/** imports
+ * @author mariana
+ */
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,21 +16,37 @@ import javax.swing.JOptionPane;
 import connection.ConnectionFactory;
 import model.CafeModel;
 
+/** Classe da Sala de Cafe
+ * @author mariana
+ */
+
 public class CafeDAO {
 
 CafeDAO cafeDAO = new CafeDAO();
 	
+	/** conexão com o banco
+	 * @author mariana
+	 */
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement stmt = null;
 	ResultSet result = null;
 	
-	//CREATE CONSTRUCTOR
+	/** constructor para criacao de uma sala de café
+	 * @author mariana
+	 */
 	public void create(CafeModel cafe) {
 		try {
+			/** query para o insert no banco
+			 * @author mariana
+			 */
 			String sql = "insert into salasEventos " +
 	                  "(nome, lotacao) " +
 	                  "values (?,?)";
 			stmt = connection.prepareStatement(sql);
+			
+			/** get pega os valores da model enquanto o set incere os valores na model
+			 * @author mariana
+			 */
 			
 			stmt.setString(1, cafe.getNome());
 			stmt.setInt(2, cafe.getLotacao(0));
@@ -40,13 +60,18 @@ CafeDAO cafeDAO = new CafeDAO();
 			
 		}finally {
 			
+			/** terminando o try ele fecha a conexao
+			 * @author mariana
+			 */
 			ConnectionFactory.closeConnection(connection, stmt);
 			
           }
 	}
 	
-	//UPDATE
-	public void update(CafeModel cafe) {
+	/*/** constructor para atualizar uma sala de café
+	 * @author mariana
+	 */
+	/*public void update(CafeModel cafe) {
 			
 			try {
 				stmt = connection.prepareStatement("UPDATE salasEventos SET nome = ?, lotacao = ? WHERE id = ?");
@@ -67,9 +92,11 @@ CafeDAO cafeDAO = new CafeDAO();
 				ConnectionFactory.closeConnection(connection, stmt);
 				
 	          }
-		}
+		}*/
 		
-		//DELETE
+	/** constructor para deletar uma sala de café espécifica por id
+	 * @author mariana
+	 */
 		public void delete(CafeModel cafe) {
 			
 			try {
@@ -92,7 +119,9 @@ CafeDAO cafeDAO = new CafeDAO();
 		
 		}
 		
-		//Listar salas e capacidade de lotacao
+		/** constructor para listar as salas de café e a capacidade de lotacao
+		 * @author mariana
+		 */
 		
 		public  List<CafeModel> read() {
 			List<CafeModel> cafe = new ArrayList<>();
@@ -119,9 +148,11 @@ CafeDAO cafeDAO = new CafeDAO();
 		}
 		
 		
-		
-		//Pesquisa por partes
-		public  List<CafeModel> readFroNome() {
+		/*
+		/** constructor para listar as salas de café e a capacidade de lotacao fazendo uma pesquisa por nome
+		 * @author mariana
+		 */
+		/*public  List<CafeModel> readFroNome() {
 			List<CafeModel> cafe = new ArrayList<>();
 			
 			try {
@@ -144,6 +175,6 @@ CafeDAO cafeDAO = new CafeDAO();
 			}
 			
 			return cafe;
-		}
+		}*/
 	
 }

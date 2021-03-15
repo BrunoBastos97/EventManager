@@ -1,5 +1,10 @@
 package dao;
 
+
+/** imports
+ * @author mariana
+ */
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,13 +18,31 @@ import connection.ConnectionFactory;
 import model.EtapaModel;
 import model.PessoaModel;
 
+/** Classe da Etapa
+ * @author mariana
+ */
+
+
 public class EtapaDAO {
+	
+	/** conexão com o banco
+	 * @author mariana 
+	 */
+	
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement statement = null;
 	ResultSet result = null;
 	
+	/** variaveis globais
+	 * @author mariana
+	 */
+	
 	int quantidadeDeSalas = 1;
 	int idSalaEvento = 1;
+	
+	/** constructor para selecionar pessoa por etapa
+	 * @author mariana
+	 */
 	
 	public void idPessoa() {
 		
@@ -41,6 +64,10 @@ public class EtapaDAO {
 		}
 		
 	}
+	
+	/** constructor para criacao de uma etapa
+	 * @author mariana
+	 */
 
 	public void createEtapas(EtapaModel etapa) {
 		

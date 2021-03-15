@@ -10,13 +10,13 @@ public class CafeModel {
 	private int lotacao;
 	
 	public int getId() {
-		return this.id;
+		return id;
 	}
-	
+
 	public void setId(int id) {
-		this.setId(id);
+		this.id = id;
 	}
-	
+
 	public String getNome() {
 		return this.nome;
 	}
@@ -25,7 +25,7 @@ public class CafeModel {
 		this.nome = nome;
 	}
 	
-	public int getLotacao(int lotacao) {
+	public int getLotacao() {
 		return this.lotacao;
 	}
 	

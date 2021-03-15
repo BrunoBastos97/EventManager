@@ -22,7 +22,7 @@ import model.CafeModel;
 
 public class CafeDAO {
 
-CafeDAO cafeDAO = new CafeDAO();
+	CafeModel cafe = new CafeModel();
 	
 	/** conexão com o banco
 	 * @author mariana
@@ -39,7 +39,7 @@ CafeDAO cafeDAO = new CafeDAO();
 			/** query para o insert no banco
 			 * @author mariana
 			 */
-			String sql = "insert into salasEventos " +
+			String sql = "insert into espacosCafe " +
 	                  "(nome, lotacao) " +
 	                  "values (?,?)";
 			stmt = connection.prepareStatement(sql);
@@ -49,10 +49,10 @@ CafeDAO cafeDAO = new CafeDAO();
 			 */
 			
 			stmt.setString(1, cafe.getNome());
-			stmt.setInt(2, cafe.getLotacao(0));
+			stmt.setInt(2, cafe.getLotacao());
 			
 			stmt.execute(); 
-			JOptionPane.showMessageDialog(null, cafe.getId() + " gerado com sucesso!");
+			JOptionPane.showMessageDialog(null, cafe.getNome() + " gerado com sucesso!");
 			
 		}catch(SQLException e){
 			
@@ -68,31 +68,27 @@ CafeDAO cafeDAO = new CafeDAO();
           }
 	}
 	
-	/*/** constructor para atualizar uma sala de café
+	/** constructor para atualizar uma sala de café
 	 * @author mariana
 	 */
-	/*public void update(CafeModel cafe) {
+	public void update(CafeModel cafe) {
 			
 			try {
-				stmt = connection.prepareStatement("UPDATE salasEventos SET nome = ?, lotacao = ? WHERE id = ?");
+				stmt = connection.prepareStatement("UPDATE espacosCafe SET nome = ?, lotacao = ? WHERE id = ?");
 				stmt.setString(1, cafe.getNome());
-				stmt.setInt(2, cafe.getLotacao(0));
+				stmt.setInt(2, cafe.getLotacao());
 				stmt.setInt(3, cafe.getId());
 				
 				stmt.executeUpdate();
 				
-				JOptionPane.showMessageDialog(null, cafe.getId() + " gerado com sucesso!");
-				
-			} catch(SQLException e){
-				
-				System.out.println(e);
-				
+				JOptionPane.showMessageDialog(null, cafe.getNome()+ " atualizado com sucesso!");
+			}catch(SQLException e){
+				JOptionPane.showMessageDialog(null, "Erro ao atualizar!"+ e);
 			}finally {
 				
 				ConnectionFactory.closeConnection(connection, stmt);
-				
-	          }
-		}*/
+	        }
+		}
 		
 	/** constructor para deletar uma sala de café espécifica por id
 	 * @author mariana
@@ -100,12 +96,12 @@ CafeDAO cafeDAO = new CafeDAO();
 		public void delete(CafeModel cafe) {
 			
 			try {
-				stmt = connection.prepareStatement("DELETE FROM salasEventos WHERE id = ?");
+				stmt = connection.prepareStatement("DELETE FROM espacosCafe WHERE id = ?");
 				stmt.setInt(1, cafe.getId());
 	
 				stmt.executeUpdate();
 		
-				JOptionPane.showMessageDialog(null, cafe.getId() + " deletado com sucesso!");
+				JOptionPane.showMessageDialog(null, cafe.getNome() + " deletado com sucesso!");
 				
 			} catch(SQLException e){
 				
@@ -124,18 +120,20 @@ CafeDAO cafeDAO = new CafeDAO();
 		 */
 		
 		public  List<CafeModel> read() {
-			List<CafeModel> cafe = new ArrayList<>();
+			List<CafeModel> cafes = new ArrayList<>();
 			
 			try {
-				stmt = connection.prepareStatement("SELECT * FROM salasEventos");
+				stmt = connection.prepareStatement("SELECT * FROM espacosCafe");
 				result = stmt.executeQuery();
 				
 				while (result.next()) {
-					CafeModel cafes = new CafeModel();
+					CafeModel cafe = new CafeModel();
 					
-					cafes.setId(result.getInt("id"));
-					cafes.setNome(result.getString("nome"));
-					cafes.setLotacao(result.getInt(""));	
+					cafe.setId(result.getInt("id"));
+					cafe.setNome(result.getString("nome"));
+					cafe.setLotacao(result.getInt("lotacao"));
+					cafes.add(cafe);
+					
 				}
 				
 			} catch (Exception e) {
@@ -144,28 +142,29 @@ CafeDAO cafeDAO = new CafeDAO();
 				ConnectionFactory.closeConnection(connection, stmt, result);
 			}
 			
-			return cafe;
+			return cafes;
 		}
 		
 		
-		/*
+		
 		/** constructor para listar as salas de café e a capacidade de lotacao fazendo uma pesquisa por nome
 		 * @author mariana
 		 */
-		/*public  List<CafeModel> readFroNome() {
-			List<CafeModel> cafe = new ArrayList<>();
+		public  List<CafeModel> readFroNome(CafeModel nome) {
+			List<CafeModel> cafes = new ArrayList<>();
 			
 			try {
-				stmt = connection.prepareStatement("SELECT * FROM salasEventos WHERE nome LIKE ? ");
-				stmt.setString(1, "%"+cafe.get(0)+"%");
+				stmt = connection.prepareStatement("SELECT * FROM espacosCafe WHERE nome LIKE ? ");
+				stmt.setString(1, "%"+nome.getNome()+"%");
 				result = stmt.executeQuery();
 				
 				while (result.next()) {
-					CafeModel cafes = new CafeModel();
+					CafeModel cafe = new CafeModel();
 					
-					cafes.setId(result.getInt("id"));
-					cafes.setNome(result.getString("nome"));
-					cafes.setLotacao(result.getInt(""));	
+					cafe.setId(result.getInt("id"));
+					cafe.setNome(result.getString("nome"));
+					cafe.setLotacao(result.getInt("lotacao"));	
+					cafes.add(cafe);
 				}
 				
 			} catch (Exception e) {
@@ -174,7 +173,7 @@ CafeDAO cafeDAO = new CafeDAO();
 				ConnectionFactory.closeConnection(connection, stmt, result);
 			}
 			
-			return cafe;
-		}*/
+			return cafes;
+		}
 	
 }

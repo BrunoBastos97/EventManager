@@ -14,7 +14,13 @@ import model.EtapaModel;
 import model.PessoaModel;
 import model.VerificarLotacaoModel;
 
+/** Classe da Etapa
+ * @author Bruno Bastos
+ */
 public class EtapaDAO {
+	/** conexão com o banco
+	 * @author mariana
+	 */
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement statement = null;
 	ResultSet result = null;
@@ -23,6 +29,9 @@ public class EtapaDAO {
 	int idSalaEvento = 1;
 	boolean lotado = false;
 	
+	/**  Método para obter a quantidade de pessoas cadastradas;
+	 * @author Bruno Bastos
+	 */
 	public boolean idPessoa() {
 		boolean estaLotado = false;
 		
@@ -46,6 +55,9 @@ public class EtapaDAO {
 		return estaLotado;
 	}
 	
+	/**  Método para criar etapas;
+	 * @author Bruno Bastos
+	 */
 	public boolean create(EtapaModel etapa) {
 		EventoDAO eventoDao = new EventoDAO();
 		int maxSalasEventos = eventoDao.maxSalasEventos();
@@ -103,6 +115,9 @@ public class EtapaDAO {
 		return lotado;
 	}
 	
+	/**  Método para obter a quantidade de salas de eventos cadastradas;
+	 * @author Bruno Bastos
+	 */
 	public void readNumeroEventoECafe() {
 		try {
 			statement = connection.prepareStatement("SELECT COUNT(id) as countId FROM salasEventos"); 
@@ -111,8 +126,6 @@ public class EtapaDAO {
 			while (result.next()) {
 				quantidadeDeSalas = result.getInt("countId");
 			}
-			
-			
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao verificar quantidade de salas!"+ ex);
 		}finally {
@@ -122,6 +135,9 @@ public class EtapaDAO {
 		
 	}
 	
+	/**  Método para listar as etapas cadastradas;
+	 * @author Bruno Bastos
+	 */
 	public List<EtapaModel>  read() {
 		List<EtapaModel> etapas = new ArrayList<>();
 		
@@ -151,6 +167,9 @@ public class EtapaDAO {
 		return etapas;
 	}
 	
+	/**  Método para listar as etapas pesquisadas;
+	 * @author Bruno Bastos
+	 */
 	public List<EtapaModel>  readPesquisa(EtapaModel pesquisa) {
 		List<EtapaModel> etapas = new ArrayList<>();
 		
@@ -182,6 +201,10 @@ public class EtapaDAO {
 		return etapas;
 	}
 	
+
+	/**  Método para deletar uma etapa;
+	 * @author Bruno Bastos
+	 */
 	public void delete(PessoaModel pessoa) {
 		
 		try {

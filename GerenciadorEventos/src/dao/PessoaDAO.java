@@ -12,16 +12,29 @@ import connection.ConnectionFactory;
 import model.EtapaModel;
 import model.PessoaModel;
 
+/** Classe da Sala de Cafe
+ * @author Bruno Bastos
+ */
+
 public class PessoaDAO {
 	
 	EtapaDAO etapa = new EtapaDAO();
 	
+	/** Criação da conexão com o banco de dados
+	 * @author Bruno Bastos
+	 */
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement statement = null;
 	ResultSet result = null;
 	
+	/** Método para Inserção de uma pessoa
+	 * @author Bruno Bastos
+	 */
 	public void create(PessoaModel pessoa) {
 		boolean lotado;
+		/** Realizando o insert de uma pessoa no banco de dados
+		 * @author Bruno Bastos
+		 */
 		try {
 			statement = connection.prepareStatement("INSERT INTO pessoas(nome, sobreNome) VALUES(?, ?)");
 			statement.setString(1, pessoa.getNome());
@@ -45,6 +58,9 @@ public class PessoaDAO {
 	
 	}
 	
+	/**  Método para atualizar uma pessoa
+	 * @author Bruno Bastos
+	 */
 	public void update(PessoaModel pessoa) {
 		
 		try {
@@ -65,6 +81,9 @@ public class PessoaDAO {
 	
 	}
 	
+	/**  Método para deletar uma pessoa
+	 * @author Bruno Bastos
+	 */
 	public void delete(PessoaModel pessoa) {
 		
 		try {
@@ -85,6 +104,9 @@ public class PessoaDAO {
 	
 	}
 	
+	/**  Método para listar pessoas
+	 * @author Bruno Bastos
+	 */
 	public List<PessoaModel>  read() {
 		List<PessoaModel> pessoas = new ArrayList<>();
 		
@@ -110,6 +132,9 @@ public class PessoaDAO {
 		return pessoas;
 	}
 	
+	/**  Método para listar pessoas que o nome foi pesquisado
+	 * @author Bruno Bastos
+	 */
 	public List<PessoaModel>  readFroNome(PessoaModel nome) {
 		List<PessoaModel> pessoas = new ArrayList<>();
 		

@@ -95,6 +95,7 @@ public class CadastroCafe {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setTitle("Café");
 		frame.setBounds(100, 100, 783, 471);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -143,6 +144,11 @@ public class CadastroCafe {
 		scrollPane.setViewportView(tableCafe);
 		
 		JButton btnHome = new JButton("Home");
+		btnHome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		});
 		btnHome.setBounds(20, 11, 89, 23);
 		frame.getContentPane().add(btnHome);
 		

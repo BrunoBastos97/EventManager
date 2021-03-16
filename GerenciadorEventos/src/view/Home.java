@@ -65,6 +65,24 @@ public class Home {
 		});
 		mnNewMenu.add(mnPessoa);
 		
+		JMenuItem mnCafe = new JMenuItem("Cafe");
+		mnCafe.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CadastroCafe cafe = new CadastroCafe();
+				cafe.main(null);
+			}
+		});
+		mnNewMenu.add(mnCafe);
+		
+		JMenuItem mnEvento = new JMenuItem("Evento");
+		mnEvento.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SalaDeEventos evento = new SalaDeEventos();
+				evento.main(null);
+			}
+		});
+		mnNewMenu.add(mnEvento);
+		
 		JMenu mnEtapas = new JMenu("Etapa");
 		menuBar.add(mnEtapas);
 		

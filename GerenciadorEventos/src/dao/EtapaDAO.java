@@ -19,7 +19,7 @@ import model.VerificarLotacaoModel;
  */
 public class EtapaDAO {
 	/** conexão com o banco
-	 * @author mariana
+	 * @author Bruno Bastos
 	 */
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement statement = null;

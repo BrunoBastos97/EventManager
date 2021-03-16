@@ -97,6 +97,7 @@ public class SalaDeEventos {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setTitle("Evento");
 		frame.setBounds(100, 100, 862, 510);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().setLayout(null);

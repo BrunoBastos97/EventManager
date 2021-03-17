@@ -162,6 +162,4 @@ public class PessoaDAO {
 		return pessoas;
 	}
 	
-	
-	
 }

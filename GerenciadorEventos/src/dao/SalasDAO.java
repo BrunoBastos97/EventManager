@@ -100,7 +100,7 @@ public class SalasDAO {
 			statement.executeUpdate();
 			cafeDao.delete(cafeModel);
 			
-			JOptionPane.showMessageDialog(null, sala.getNomeSala() + " deletado com sucesso!");
+			JOptionPane.showMessageDialog(null, "Deletado com sucesso!");
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao deletar!"+ ex);
 		}finally {

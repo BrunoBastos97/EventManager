@@ -67,7 +67,7 @@ public class EtapaDAO {
 		//CafeDAO cafeDao = new CafeDAO();
 		
 		int maxSalasEventos = salasDao.maxSalasEventos();
-		int lotados = 0;
+		int lotados = 1;
 		//int id = 0;
 		/**  Processo onde vai estar verificando as etapas e criando uma etapa com uma sala de café e espaço de evento
 		 * 	 A sala de cafe e o espaço de evento tem ter vagas para que a pessoa seja adicionada na etapa
@@ -113,7 +113,7 @@ public class EtapaDAO {
 					ConnectionFactory.closeConnection(connection, statement);
 				}
 				break;
-			}else {
+			}else{
 				lotados++;
 			}
 			
@@ -121,7 +121,7 @@ public class EtapaDAO {
 		}
 		VerificarLotacaoModel verificar = salasDao.verificarLotacaoGeral();
 		
-		if(lotados == verificar.getLotacaoGeral()) {
+		if(lotados >= verificar.getLotacaoGeral()) {
 			lotado = true;
 		}
 		

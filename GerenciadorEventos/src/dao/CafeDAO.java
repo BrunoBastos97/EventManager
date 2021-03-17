@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import connection.ConnectionFactory;
 import model.CafeModel;
 import model.EtapaModel;
+import model.VerificarLotacaoCafeModel;
+import model.VerificarLotacaoModel;
 
 /** Classe da Sala de Cafe
  * @author mariana
@@ -32,10 +34,17 @@ public class CafeDAO {
 	PreparedStatement stmt = null;
 	ResultSet result = null;
 	
+	int maxSalasEventos;
+	int countIdEspassoCafe = 0;
 	/** constructor para criacao de uma sala de café
 	 * @author mariana
 	 */
 	public void create(CafeModel cafe) {
+		SalasDAO salasDao = new SalasDAO();
+		
+		int countIdEspassoCafe = countIdespassoCafe();
+		int maxSala = salasDao.maxSalasEventos();
+		
 		try {
 			/** query para o insert no banco
 			 * @author mariana
@@ -43,17 +52,32 @@ public class CafeDAO {
 			String sql = "insert into espacosCafe " +
 	                  "(nome, lotacao) " +
 	                  "values (?,?)";
-			stmt = connection.prepareStatement(sql);
+				stmt = connection.prepareStatement(sql);
 			
 			/** get pega os valores da model enquanto o set incere os valores na model
 			 * @author mariana
 			 */
-			
 			stmt.setString(1, cafe.getNome());
 			stmt.setInt(2, cafe.getLotacao());
 			
-			stmt.execute(); 
-			JOptionPane.showMessageDialog(null, cafe.getNome() + " gerado com sucesso!");
+			VerificarLotacaoModel verificarEvento = salasDao.verificarLotacaoSalaDeEvento(countIdEspassoCafe == 0 ? 1 : countIdEspassoCafe);	
+			
+			/**  condição para verificar adicionar o café;
+			 * @author Bruno Bastos
+			 */
+			if(verificarEvento.getLotacao() == cafe.getLotacao() && countIdEspassoCafe < 0 && countIdEspassoCafe < maxSala) {
+				stmt.execute(); 
+				JOptionPane.showMessageDialog(null,  cafe.getNome() + " cadastrado com sucesso!");
+			}else if(verificarEvento.getLotacao() == cafe.getLotacao() && countIdEspassoCafe < maxSala) {	
+				stmt.execute(); 
+				JOptionPane.showMessageDialog(null,  cafe.getNome() + " cadastrado com sucesso!");
+			}else if(verificarEvento.getLotacao() != cafe.getLotacao() && countIdEspassoCafe > -1){
+				JOptionPane.showMessageDialog(null, "A lotação do espaço de café "+ cafe.getNome() + " tem que ser a mesma do " + verificarEvento.getNome());
+	
+			}else {
+				JOptionPane.showMessageDialog(null, "Os espaços de café devem conter a mesma quantidade de salas de eventos. Por favor adicione mais uma "
+													+ "sala de eventos, para poder adicionar mais um espaço de café");
+			}
 			
 		}catch(SQLException e){
 			
@@ -105,8 +129,7 @@ public class CafeDAO {
 				JOptionPane.showMessageDialog(null, cafe.getNome() + " deletado com sucesso!");
 				
 			} catch(SQLException e){
-				
-				System.out.println(e);
+				JOptionPane.showMessageDialog(null, cafe.getNome() + " Não pode ser deletado"+ e);
 				
 			}finally {
 				
@@ -115,7 +138,7 @@ public class CafeDAO {
 	          }
 		
 		}
-		
+	
 		/** constructor para listar as salas de café e a capacidade de lotacao
 		 * @author mariana
 		 */
@@ -145,8 +168,6 @@ public class CafeDAO {
 			
 			return cafes;
 		}
-		
-		
 		
 		/** constructor para listar as salas de café e a capacidade de lotacao fazendo uma pesquisa por nome
 		 * @author mariana
@@ -181,18 +202,16 @@ public class CafeDAO {
 		 * @author Bruno Bastos
 		 */
 		public int countIdespassoCafe() {
-			int countIdEspassoCafe = 0;
+			int ultimoIdCafe = 0;
 			
-			EtapaModel etapa = new EtapaModel();
+			VerificarLotacaoCafeModel ultimoId = new VerificarLotacaoCafeModel();
 			try {
 				stmt = connection.prepareStatement("SELECT COUNT(id) as countId FROM espacosCafe"); 
 				result = stmt.executeQuery();
 
 				while (result.next()) {
-					etapa.setIdPessoa(result.getInt("countId"));
+					ultimoId.setUltimoIdCafe(result.getInt("countId"));
 				}
-				
-				//estaLotado = create(etapa);
 				
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(null, "Erro ao contar etapa!"+ ex);
@@ -200,7 +219,77 @@ public class CafeDAO {
 				ConnectionFactory.closeConnection(connection, stmt, result);
 			}
 			
-			return countIdEspassoCafe;
+			ultimoIdCafe = ultimoId.getUltimoIdCafe();
+			
+			return ultimoIdCafe;
 		}
 	
+		/**  Método para verificar a quantidade de espaços de café;
+		 * @author Bruno Bastos
+		 */
+		   public int maxSalasEventos() {
+				
+				try {
+					stmt = connection.prepareStatement("SELECT MAX(id) as MaxId FROM espacosCafe"); 
+					result = stmt.executeQuery();
+					
+					while (result.next()) {
+						maxSalasEventos = result.getInt("MaxId");
+					}
+					
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao verificar o total de salas de eventos!"+ ex);
+				}finally {
+					ConnectionFactory.closeConnection(connection, stmt, result);
+				}
+				
+				return maxSalasEventos;
+				
+			}
+			
+			public VerificarLotacaoCafeModel verificarLotacao(int id) {
+				VerificarLotacaoCafeModel verificar =  new VerificarLotacaoCafeModel();
+				
+				try {
+					stmt = connection.prepareStatement("select c.nome, c.lotacao, COUNT(id_pessoas) as countPessoa from etapas e inner join espacosCafe c on e.id_espacosCafe = c.id  where c.id = ? group by e.id_pessoas and c.id"); 
+					stmt.setInt(1, id);
+					result = stmt.executeQuery();
+					
+					while (result.next()) {
+						verificar.setCountPessoa(result.getInt("countPessoa"));
+						verificar.setLotacao(result.getInt("lotacao"));
+					}
+					
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao verificar o total de salas de eventos!"+ ex);
+				}finally {
+					ConnectionFactory.closeConnection(connection, stmt, result);
+				}
+
+				return verificar;
+				
+			}
+			
+			/**  Método para verificar a lotação geral das espaços de café;
+			 * @author Bruno Bastos
+			 */
+			
+			public VerificarLotacaoModel verificarLotacaoGeral() {
+				VerificarLotacaoModel verificar =  new VerificarLotacaoModel();
+				
+				try {
+					stmt = connection.prepareStatement("select sum(lotacao) as lotacao from espacosCafe"); 
+					result = stmt.executeQuery();
+					
+					while (result.next()) {
+						verificar.setLotacaoGeral(result.getInt("lotacao"));
+					}
+					
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao verificar lotação!"+ ex);
+				}finally {
+					ConnectionFactory.closeConnection(connection, stmt, result);
+				}
+				return verificar;
+			}		
 }

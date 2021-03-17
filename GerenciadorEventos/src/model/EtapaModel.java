@@ -1,16 +1,25 @@
 package model;
 
 public class EtapaModel {
+	private int id;
 	private int evento;
 	private int idPessoa;
 	private int idSalaDeEvento;
 	private int idEspacosCafe;
+	
 	
 	private String nome;
 	private String sobreNome;
 	private String salaDeEvento;
 	private String espacoDeCafe;
 	
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	
 	public String getNome() {
 		return nome;

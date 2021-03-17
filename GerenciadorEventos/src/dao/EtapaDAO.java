@@ -12,6 +12,8 @@ import javax.swing.JOptionPane;
 import connection.ConnectionFactory;
 import model.EtapaModel;
 import model.PessoaModel;
+import model.VerificarLotacaoCafeModel;
+import model.VerificarLotacaoEtapaModel;
 import model.VerificarLotacaoModel;
 
 /** Classe da Etapa
@@ -24,6 +26,8 @@ public class EtapaDAO {
 	Connection connection = ConnectionFactory.getConnection();
 	PreparedStatement statement = null;
 	ResultSet result = null;
+	
+	VerificarLotacaoEtapaModel verificarEtapa = new VerificarLotacaoEtapaModel();
 	
 	int quantidadeDeSalas = 1;
 	int idSalaEvento = 1;
@@ -59,21 +63,30 @@ public class EtapaDAO {
 	 * @author Bruno Bastos
 	 */
 	public boolean create(EtapaModel etapa) {
-		EventoDAO eventoDao = new EventoDAO();
-		int maxSalasEventos = eventoDao.maxSalasEventos();
-		int lotados = 0;
+		SalasDAO salasDao = new SalasDAO();
+		//CafeDAO cafeDao = new CafeDAO();
 		
+		int maxSalasEventos = salasDao.maxSalasEventos();
+		int lotados = 0;
+		//int id = 0;
+		/**  Processo onde vai estar verificando as etapas e criando uma etapa com uma sala de café e espaço de evento
+		 * 	 A sala de cafe e o espaço de evento tem ter vagas para que a pessoa seja adicionada na etapa
+		 * @author Bruno Bastos
+		 */
 		for(int NumeroDaEtapa = 1; NumeroDaEtapa <= 2; NumeroDaEtapa++) {
 			for(int i = 1; maxSalasEventos >= i; i++) {
 		
-			VerificarLotacaoModel verificar = eventoDao.verificarLotacao(i);
-			
-			if(verificar.getLotacao() > verificar.getCountPessoa()) {
+			VerificarLotacaoModel verificarEvento = salasDao.verificarLotacao(i);
+
+			Random random1 = new Random();
+			int random = (random1.nextInt(salasDao.maxSalasEventos()) + 1);
+		
+			if(verificarEvento.getLotacao() > verificarEvento.getCountPessoa()) {
 				try { 
 					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
 					statement.setInt(1, NumeroDaEtapa);
-					statement.setInt(2, i);
-					statement.setInt(3, i);
+					statement.setInt(2, random);
+					statement.setInt(3, random);
 					statement.setInt(4, etapa.getIdPessoa());
 						
 					statement.executeUpdate();
@@ -84,7 +97,7 @@ public class EtapaDAO {
 					ConnectionFactory.closeConnection(connection, statement);
 				}
 				break;
-			}else if(verificar.getLotacao() == 0 && verificar.getCountPessoa() == 0){
+			}else if(verificarEvento.getLotacao() == 0 && verificarEvento.getCountPessoa() == 0){
 				try { 
 					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
 					statement.setInt(1, NumeroDaEtapa);
@@ -106,7 +119,7 @@ public class EtapaDAO {
 			
 			}
 		}
-		VerificarLotacaoModel verificar = eventoDao.verificarLotacaoGeral();
+		VerificarLotacaoModel verificar = salasDao.verificarLotacaoGeral();
 		
 		if(lotados == verificar.getLotacaoGeral()) {
 			lotado = true;
@@ -206,13 +219,12 @@ public class EtapaDAO {
 	 * @author Bruno Bastos
 	 */
 	public void delete(PessoaModel pessoa) {
-		
 		try {
 			statement = connection.prepareStatement("DELETE FROM etapas WHERE id_Pessoas = ?");
 			statement.setInt(1, pessoa.getId());
 
 			statement.executeUpdate();
-		
+	
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao deletar!"+ ex);
 		}finally {
@@ -220,7 +232,5 @@ public class EtapaDAO {
 		}
 	
 	}
-	
-
 
 }

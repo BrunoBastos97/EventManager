@@ -14,7 +14,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import connection.ConnectionFactory;
+import model.CafeModel;
 import model.SalasModel;
+import model.VerificarLotacaoModel;
 
 /** Classe das Salas de evento
  * @author Mateus Haverorth
@@ -33,6 +35,8 @@ public class SalasDAO {
     ResultSet result = null;
 
     
+	int maxSalasEventos;
+	
     /** constructor para criação de uma sala de evento
 	 * @author Mateus Haverorth
 	 */
@@ -83,6 +87,10 @@ public class SalasDAO {
 	 */
     
     public void delete(SalasModel sala) {
+		CafeDAO cafeDao = new CafeDAO();
+		CafeModel cafeModel = new CafeModel();
+		
+		cafeModel.setId(sala.getId());
 		
 		try {
 			statement = connection.prepareStatement("DELETE FROM salaseventos WHERE id = ?");
@@ -90,6 +98,7 @@ public class SalasDAO {
 
 			
 			statement.executeUpdate();
+			cafeDao.delete(cafeModel);
 			
 			JOptionPane.showMessageDialog(null, sala.getNomeSala() + " deletado com sucesso!");
 		} catch (Exception ex) {
@@ -159,6 +168,111 @@ public class SalasDAO {
 		}
 		
 		return salas;
+	}
+    
+
+	/**  Método verificar a quantidade de salas;
+	 * @author Bruno Bastos
+	 */
+    public int maxSalasEventos() {
+		
+		try {
+			statement = connection.prepareStatement("SELECT MAX(id) as MaxId FROM salasEventos"); 
+			result = statement.executeQuery();
+			
+			while (result.next()) {
+				maxSalasEventos = result.getInt("MaxId");
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao verificar o total de salas de eventos!"+ ex);
+		}finally {
+			ConnectionFactory.closeConnection(connection, statement, result);
+		}
+		
+		return maxSalasEventos;
+		
+	}
+	
+
+	/**  Método para verificar a lotação por sala;
+	 * @author Bruno Bastos
+	 */
+	public VerificarLotacaoModel verificarLotacao(int id) {
+		VerificarLotacaoModel verificar =  new VerificarLotacaoModel();
+		EtapaDAO etapa = new EtapaDAO();
+		
+		try {
+			statement = connection.prepareStatement("select se.nome, se.lotacao, COUNT(id_pessoas) as countPessoa from etapas e inner join salasEventos se on e.id_salasEventos = se.id  where se.id = ? group by e.id_pessoas and se.id"); 
+			statement.setInt(1, id);
+			result = statement.executeQuery();
+			
+			while (result.next()) {
+				verificar.setId(id);
+				verificar.setNome(result.getString("nome"));
+				verificar.setCountPessoa(result.getInt("countPessoa"));
+				verificar.setLotacao(result.getInt("lotacao"));
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao verificar o total de salas de eventos!"+ ex);
+		}finally {
+			ConnectionFactory.closeConnection(connection, statement, result);
+		}
+
+		return verificar;
+		
+	}
+	
+
+	/**  Método para verificar a lotação por evento;
+	 * @author Bruno Bastos
+	 */
+	public VerificarLotacaoModel verificarLotacaoSalaDeEvento(int id) {
+		VerificarLotacaoModel verificar =  new VerificarLotacaoModel();
+		
+		try {
+			statement = connection.prepareStatement("select nome, lotacao from salasEventos where id = ?"); 
+			statement.setInt(1, id);
+			result = statement.executeQuery();
+			
+			while (result.next()) {
+				verificar.setId(id);
+				verificar.setNome(result.getString("nome"));
+				verificar.setLotacao(result.getInt("lotacao"));
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao verificar o total de salas de eventos 2222!"+ ex);
+		}finally {
+			ConnectionFactory.closeConnection(connection, statement, result);
+		}
+
+		return verificar;
+		
+	}
+	
+
+	/**  Método para verificar a lotação geral das salas;
+	 * @author Bruno Bastos
+	 */
+	public VerificarLotacaoModel verificarLotacaoGeral() {
+		VerificarLotacaoModel verificar =  new VerificarLotacaoModel();
+		
+		try {
+			statement = connection.prepareStatement("select sum(lotacao) as lotacao from salasEventos"); 
+			result = statement.executeQuery();
+			
+			while (result.next()) {
+				verificar.setLotacaoGeral(result.getInt("lotacao"));
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao verificar lotação!"+ ex);
+		}finally {
+			ConnectionFactory.closeConnection(connection, statement, result);
+		}
+		return verificar;
 	}
 
 }

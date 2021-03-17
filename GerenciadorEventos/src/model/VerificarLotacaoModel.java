@@ -2,10 +2,24 @@ package model;
 
 public class VerificarLotacaoModel {
 	
+	private int id;
 	private int lotacao;
 	private int countPessoa;
 	private int lotacaoGeral;
+	private String nome;
 	
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public int getLotacaoGeral() {
 		return lotacaoGeral;
 	}

@@ -6,7 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import dao.EtapaDAO;
 import dao.PessoaDAO;
+import model.EtapaModel;
 import model.PessoaModel;
 
 import javax.swing.JLabel;
@@ -166,13 +168,16 @@ public class CadastroPessoa {
 			public void actionPerformed(ActionEvent e) {
 				PessoaModel pessoaModel = new PessoaModel();
 				PessoaDAO pessoDao = new PessoaDAO();
-							
+				EtapaDAO etapaDao = new EtapaDAO();
+				
 				if(id == 0) {
 					JOptionPane.showMessageDialog(null, "É preciso selecionar um registro!");
 				}else {
 					pessoaModel.setId(id);
-									
+					pessoaModel.setNome(textNome.getText());
+					pessoaModel.setSobreNome(textSobreNome.getText());
 					pessoDao.delete(pessoaModel);
+					etapaDao.delete(pessoaModel);
 					
 					((DefaultTableModel) tablePessoas.getModel()).setRowCount(0);
 					readTtable();

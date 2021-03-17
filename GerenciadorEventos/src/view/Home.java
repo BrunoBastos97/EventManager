@@ -56,14 +56,14 @@ public class Home {
 		JMenu mnNewMenu = new JMenu("Menu");
 		menuBar.add(mnNewMenu);
 		
-		JMenuItem mnPessoa = new JMenuItem("Pessoa");
-		mnPessoa.addActionListener(new ActionListener() {
+		JMenuItem mnEvento = new JMenuItem("Evento");
+		mnEvento.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CadastroPessoa pessoa = new CadastroPessoa();
-				pessoa.main(null);
+				SalaDeEventos evento = new SalaDeEventos();
+				evento.main(null);
 			}
 		});
-		mnNewMenu.add(mnPessoa);
+		mnNewMenu.add(mnEvento);
 		
 		JMenuItem mnCafe = new JMenuItem("Cafe");
 		mnCafe.addActionListener(new ActionListener() {
@@ -74,14 +74,14 @@ public class Home {
 		});
 		mnNewMenu.add(mnCafe);
 		
-		JMenuItem mnEvento = new JMenuItem("Evento");
-		mnEvento.addActionListener(new ActionListener() {
+		JMenuItem mnPessoa = new JMenuItem("Pessoa");
+		mnPessoa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SalaDeEventos evento = new SalaDeEventos();
-				evento.main(null);
+				CadastroPessoa pessoa = new CadastroPessoa();
+				pessoa.main(null);
 			}
 		});
-		mnNewMenu.add(mnEvento);
+		mnNewMenu.add(mnPessoa);
 		
 		JMenu mnEtapas = new JMenu("Etapa");
 		menuBar.add(mnEtapas);

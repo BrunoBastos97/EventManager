@@ -67,7 +67,7 @@ public class EtapaDAO {
 		//CafeDAO cafeDao = new CafeDAO();
 		
 		int maxSalasEventos = salasDao.maxSalasEventos();
-		int lotados = 1;
+		int lotados = 0;
 		//int id = 0;
 		/**  Processo onde vai estar verificando as etapas e criando uma etapa com uma sala de café e espaço de evento
 		 * 	 A sala de cafe e o espaço de evento tem ter vagas para que a pessoa seja adicionada na etapa
@@ -75,11 +75,13 @@ public class EtapaDAO {
 		 */
 		for(int NumeroDaEtapa = 1; NumeroDaEtapa <= 2; NumeroDaEtapa++) {
 			for(int i = 1; maxSalasEventos >= i; i++) {
-		
-			VerificarLotacaoModel verificarEvento = salasDao.verificarLotacao(i);
-
+				
 			Random random1 = new Random();
 			int random = (random1.nextInt(salasDao.maxSalasEventos()) + 1);
+				
+			VerificarLotacaoModel verificarEvento = salasDao.verificarLotacao(i, random);
+			
+			
 		
 			if(verificarEvento.getLotacao() > verificarEvento.getCountPessoa()) {
 				try { 

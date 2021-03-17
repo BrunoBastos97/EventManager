@@ -224,6 +224,32 @@ public class SalasDAO {
 		
 	}
 	
+	public VerificarLotacaoModel verificarLotacao(int id, int lotacao) {
+		VerificarLotacaoModel verificar =  new VerificarLotacaoModel();
+		EtapaDAO etapa = new EtapaDAO();
+		
+		try {
+			statement = connection.prepareStatement("select se.nome, se.lotacao, COUNT(id_pessoas) as countPessoa from etapas e inner join salasEventos se on e.id_salasEventos = se.id  where se.id = ? and e.evento = 1 group by e.id_pessoas and se.id"); 
+			statement.setInt(1, id);
+			result = statement.executeQuery();
+			
+			while (result.next()) {
+				verificar.setId(id);
+				verificar.setNome(result.getString("nome"));
+				verificar.setCountPessoa(result.getInt("countPessoa"));
+				verificar.setLotacao(result.getInt("lotacao"));
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao verificar o total de salas de eventos!"+ ex);
+		}finally {
+			ConnectionFactory.closeConnection(connection, statement, result);
+		}
+
+		return verificar;
+		
+	}
+	
 
 	/**  Método para verificar a lotação por evento;
 	 * @author Bruno Bastos

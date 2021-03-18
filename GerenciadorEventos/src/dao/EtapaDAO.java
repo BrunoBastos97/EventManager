@@ -68,7 +68,7 @@ public class EtapaDAO {
 		
 		int maxSalasEventos = salasDao.maxSalasEventos();
 		int lotados = 0;
-		//int id = 0;
+
 		/**  Processo onde vai estar verificando as etapas e criando uma etapa com uma sala de café e espaço de evento
 		 * 	 A sala de cafe e o espaço de evento tem ter vagas para que a pessoa seja adicionada na etapa
 		 * @author Bruno Bastos
@@ -77,13 +77,13 @@ public class EtapaDAO {
 			for(int i = 1; maxSalasEventos >= i; i++) {
 				
 			Random random1 = new Random();
-			int random = (random1.nextInt(salasDao.maxSalasEventos()) + 1);
-				
-			VerificarLotacaoModel verificarEvento = salasDao.verificarLotacao(i, random);
+			int random = (random1.nextInt(salasDao.maxSalasEventos())); //Cria um numero Randomico a parte da quantidade de salas
 			
 			
-		
-			if(verificarEvento.getLotacao() > verificarEvento.getCountPessoa()) {
+			VerificarLotacaoModel verificarEvento = salasDao.verificarLotacao(i, random); //Verifica alotação da sala
+			
+			
+			if(verificarEvento.getLotacao() - 1 >= verificarEvento.getCountPessoa() + 1) {
 				try { 
 					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
 					statement.setInt(1, NumeroDaEtapa);
@@ -99,7 +99,7 @@ public class EtapaDAO {
 					ConnectionFactory.closeConnection(connection, statement);
 				}
 				break;
-			}else if(verificarEvento.getLotacao() == 0 && verificarEvento.getCountPessoa() == 0){
+			}else if(verificarEvento.getLotacao() == 0 && verificarEvento.getCountPessoa() >= 0){
 				try { 
 					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
 					statement.setInt(1, NumeroDaEtapa);
@@ -115,15 +115,32 @@ public class EtapaDAO {
 					ConnectionFactory.closeConnection(connection, statement);
 				}
 				break;
+			}else if(verificarEvento.getLotacao() < 2 && verificarEvento.getCountPessoa() >= 0){
+				try { 
+					statement = connection.prepareStatement("INSERT INTO etapas(evento, id_salasEventos, id_espacosCafe, id_pessoas) VALUES(?, ?, ?, ?)");
+					statement.setInt(1, NumeroDaEtapa);
+					statement.setInt(2, i);
+					statement.setInt(3, i);
+					statement.setInt(4, etapa.getIdPessoa());
+						
+					statement.executeUpdate();
+						
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao cadastrar na etapa!"+ ex);
+				}finally {
+					ConnectionFactory.closeConnection(connection, statement);
+				}
+				break;	
 			}else{
-				lotados++;
+				lotados++; //conta as salas que estão lotadas
 			}
 			
 			}
 		}
-		VerificarLotacaoModel verificar = salasDao.verificarLotacaoGeral();
+		VerificarLotacaoModel verificar = salasDao.verificarLotacaoGeral();/* Verifica lotação das salas no geral para poder validar se existe vagas em
+																		  	  alguma sala */	
 		
-		if(lotados >= verificar.getLotacaoGeral()) {
+		if(lotados >= verificar.getLotacaoGeral()) {//verifica a quantidade de salas lotadas e a quantidade de lotação das salas no geral
 			lotado = true;
 		}
 		

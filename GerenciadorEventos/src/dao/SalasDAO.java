@@ -100,7 +100,7 @@ public class SalasDAO {
 			statement.executeUpdate();
 			cafeDao.delete(cafeModel);
 			
-			JOptionPane.showMessageDialog(null, "Deletado com sucesso!");
+			JOptionPane.showMessageDialog(null,"Sala de eventos" + sala.getNomeSala() + " deletada com sucesso!");
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Erro ao deletar!"+ ex);
 		}finally {
@@ -224,12 +224,19 @@ public class SalasDAO {
 		
 	}
 	
+	/**  Método para verificar a lotação por sala que vai estar sendo adicionada na etapa;
+	 * @author Bruno Bastos
+	 */
 	public VerificarLotacaoModel verificarLotacao(int id, int lotacao) {
 		VerificarLotacaoModel verificar =  new VerificarLotacaoModel();
-		EtapaDAO etapa = new EtapaDAO();
+		int sala = 0;
+		SalasDAO salaDao = new SalasDAO();
 		
+		EtapaDAO etapa = new EtapaDAO();
+	
 		try {
 			statement = connection.prepareStatement("select se.nome, se.lotacao, COUNT(id_pessoas) as countPessoa from etapas e inner join salasEventos se on e.id_salasEventos = se.id  where se.id = ? and e.evento = 1 group by e.id_pessoas and se.id"); 
+			statement.setInt(1, lotacao);
 			statement.setInt(1, id);
 			result = statement.executeQuery();
 			
